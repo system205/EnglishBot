@@ -3,7 +3,7 @@ bot:
   owner-id: ${OWNER_ID}
   scheduling:
     rate: 60000 # in milliseconds
-    default-interval: 10 # in minutes
+    default-interval: 60 # in minutes
 
 spring:
   datasource:

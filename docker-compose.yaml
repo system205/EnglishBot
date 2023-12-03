@@ -1,0 +1,24 @@
+services:
+  db:
+    container_name: db
+    image: postgres:latest
+    restart: always
+    environment:
+      POSTGRES_DB: english
+    env_file:
+      - .env
+    volumes:
+      - postgres-volume:/var/lib/postgresql/data
+
+  telegram-bot:
+    image: system205/english-bot:latest
+    depends_on:
+      - db
+    restart: always
+    environment:
+      spring.datasource.url: jdbc:postgresql://db:5432/english
+    env_file:
+      - .env
+
+volumes:
+  postgres-volume:
