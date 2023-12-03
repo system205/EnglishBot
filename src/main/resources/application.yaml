@@ -1,6 +1,9 @@
 bot:
   token: ${BOT_TOKEN}
   owner-id: ${OWNER_ID}
+  scheduling:
+    rate: 60000 # in milliseconds
+    default-interval: 10 # in minutes
 
 spring:
   datasource:

@@ -1,10 +1,12 @@
 package com.system205.englishbot.telegram;
 
-import com.system205.englishbot.entity.EnglishUser;
+import com.system205.englishbot.dto.Notification;
 import com.system205.englishbot.entity.Word;
 import com.system205.englishbot.services.UserService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -19,6 +21,7 @@ import java.util.Set;
 
 @Component
 @Slf4j
+@EnableScheduling
 public class Bot extends TelegramLongPollingBot {
     private final Long ownerId;
     private final UserService userService;
@@ -36,7 +39,10 @@ public class Bot extends TelegramLongPollingBot {
             final User user = update.getMessage().getFrom();
 
             switch (text){
-                case "/start" -> log.info("User#{} sent /start", user.getId());
+                case "/start" -> {
+                    log.info("User#{} sent /start", user.getId());
+                    sendMessage(ownerId, "%s#%s sent /start".formatted(user.getUserName() , user.getId()), false);
+                }
                 case "/add_words" -> sendMessage(user.getId(),
                     """
                         Reply with the lines of words:
@@ -59,6 +65,15 @@ public class Bot extends TelegramLongPollingBot {
                     }
                 }
             }
+        }
+    }
+
+    @Scheduled(fixedRateString = "${bot.scheduling.rate}")
+    private void notifyAllUsersIfNeeded() {
+        List<Notification> notifications = this.userService.getScheduledNotifications();
+        log.info("Will notify {} users", notifications.size());
+        for (Notification notification : notifications) {
+            sendMessage(notification.getUser().getId(), notification.getText(), false);
         }
     }
 
