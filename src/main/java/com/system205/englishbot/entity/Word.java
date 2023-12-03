@@ -1,8 +1,6 @@
 package com.system205.englishbot.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +14,12 @@ public class Word {
     @Id
     @GeneratedValue
     private Long id;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private EnglishUser user;
+
+
     private String value;
     private String translation;
 

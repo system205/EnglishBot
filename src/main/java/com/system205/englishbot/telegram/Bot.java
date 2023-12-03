@@ -14,6 +14,8 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboa
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
 import java.util.Arrays;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @Slf4j
@@ -42,19 +44,18 @@ public class Bot extends TelegramLongPollingBot {
                         apple - яблоко
                         """, true);
                 case "/show_words" -> {
-                    EnglishUser englishUser = this.userService.getUser(user.getId());
-                    sendMessage(user.getId(), englishUser.getWords().toString(), false);
-
+                    final Set<Word> userWords = this.userService.getWordsByUserId(user.getId());
+                    sendMessage(user.getId(), userWords.toString(), false);
                 }
                 default -> {
                     // Handle saving words on reply
                     if (update.getMessage().isReply()) {
-                        EnglishUser englishUser = this.userService.getUser(user.getId());
-
-                        Arrays.stream(text.split("\n"))
+                        this.userService.addWordsToUser(user.getId(),
+                            Arrays.stream(text.split("\n"))
                             .map(s -> s.split(" - "))
                             .map(s -> new Word(s[0], s[1]))
-                            .forEach(englishUser.getWords()::add);
+                            .toList()
+                        );
                     }
                 }
             }

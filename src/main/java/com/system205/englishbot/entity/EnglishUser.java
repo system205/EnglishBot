@@ -1,9 +1,7 @@
 package com.system205.englishbot.entity;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.OneToMany;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -16,13 +14,14 @@ import java.util.Set;
 @Setter
 @Builder
 @AllArgsConstructor
+@Table(name = "english_users", uniqueConstraints = @UniqueConstraint(columnNames = "id"))
 public class EnglishUser {
 
     @Id
-    @GeneratedValue
+    @NotNull(message = "TelegramId has to be provided")
     private Long id;
 
-    @OneToMany
+    @OneToMany(mappedBy = "user")
     private Set<Word> words;
 
     public EnglishUser() {
