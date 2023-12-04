@@ -10,4 +10,6 @@ import java.util.Set;
 @Repository
 public interface WordRepository extends JpaRepository<Word, Long> {
     Set<Word> findByUser_Id(@NonNull Long id);
+
+    long countByUser_Id(Long id);
 }

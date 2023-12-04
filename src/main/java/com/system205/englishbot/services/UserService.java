@@ -57,10 +57,13 @@ public class UserService {
         final Instant now = Instant.now();
         for (EnglishUser user : userRepository.findAll()) {
             if (Duration.between(user.getLastNotified(), now).compareTo(user.getInterval()) > 0) {
+                Set<Word> words = wordRepository.findByUser_Id(user.getId());
+                if (words.isEmpty()) continue;
+
                 notifications.add(
                     Notification.builder()
                         .user(user)
-                        .text(getRandomElement(wordRepository.findByUser_Id(user.getId())).toString())
+                        .text(getRandomElement(words).toString())
                         .build()
                 );
                 user.setLastNotified(now);
