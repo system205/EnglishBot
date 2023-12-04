@@ -1,9 +1,9 @@
 package com.system205.englishbot.telegram;
 
 import com.system205.englishbot.dto.Notification;
-import com.system205.englishbot.entity.EnglishUser;
 import com.system205.englishbot.entity.Word;
 import com.system205.englishbot.services.UserService;
+import com.system205.englishbot.telegram.command.BotCommand;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -16,23 +16,25 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
-import java.time.Duration;
-import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 @Component
 @Slf4j
 @EnableScheduling
-public class Bot extends TelegramLongPollingBot {
+public class Bot extends TelegramLongPollingBot implements TelegramBot{
     private final Long ownerId;
     private final UserService userService;
 
-    public Bot(@Value("${bot.token}") String botToken, @Value("${bot.owner-id}") Long ownerId, UserService userService) {
+    private final Map<String, BotCommand> commands;
+
+    public Bot(@Value("${bot.token}") String botToken, @Value("${bot.owner-id}") Long ownerId, UserService userService, Map<String, BotCommand> commands) {
         super(botToken);
         this.ownerId = ownerId;
         this.userService = userService;
+        this.commands = commands;
     }
 
     @Override
@@ -55,20 +57,9 @@ public class Bot extends TelegramLongPollingBot {
                 case "/show_words" -> {
                     final Set<Word> userWords = this.userService.getWordsByUserId(user.getId());
                     sendMessage(user.getId(), userWords.toString(), false);
-                } case "/info" -> {
-                    final EnglishUser englishUser = userService.getUser(user.getId());
-                    final Instant now = Instant.now();
-                    String info = """
-                        Last notification was %s minutes ago
-                        You interval between notifications is %s minutes
-                        You saved %d words""".formatted(
-                            Duration.between(englishUser.getLastNotified(), now).toMinutes(),
-                            englishUser.getInterval().toMinutes(),
-                            userService.getNumberOfWords(englishUser.getId())
-                        );
-                    sendMessage(user.getId(), info, false);
                 }
                 default -> {
+                    commands.getOrDefault(text, BotCommand.DoNothingCommand).execute(update);
                     // Handle saving words on reply
                     if (update.getMessage().isReply()) {
                         this.userService.addWordsToUser(user.getId(),
@@ -107,5 +98,16 @@ public class Bot extends TelegramLongPollingBot {
     @Override
     public String getBotUsername() {
         return "EnglishBot";
+    }
+
+    @Override
+    public void onRegister() {
+        super.onRegister();
+        sendMessage(ownerId, "Bot was successfully registered.");
+    }
+
+    @Override
+    public void sendMessage(Long chatId, String text) {
+        sendMessage(chatId, text, false);
     }
 }
