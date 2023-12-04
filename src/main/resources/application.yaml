@@ -1,5 +1,5 @@
 bot:
-  token: ${BOT_TOKEN}
+  token: ${TELEGRAM_TOKEN}
   owner-id: ${OWNER_ID}
   scheduling:
     rate: 60000 # in milliseconds

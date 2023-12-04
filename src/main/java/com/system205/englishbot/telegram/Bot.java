@@ -1,6 +1,7 @@
 package com.system205.englishbot.telegram;
 
 import com.system205.englishbot.dto.Notification;
+import com.system205.englishbot.entity.EnglishUser;
 import com.system205.englishbot.entity.Word;
 import com.system205.englishbot.services.UserService;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,8 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import org.telegram.telegrambots.meta.api.objects.replykeyboard.ForceReplyKeyboard;
 import org.telegram.telegrambots.meta.exceptions.TelegramApiException;
 
+import java.time.Duration;
+import java.time.Instant;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
@@ -52,6 +55,18 @@ public class Bot extends TelegramLongPollingBot {
                 case "/show_words" -> {
                     final Set<Word> userWords = this.userService.getWordsByUserId(user.getId());
                     sendMessage(user.getId(), userWords.toString(), false);
+                } case "/info" -> {
+                    final EnglishUser englishUser = userService.getUser(user.getId());
+                    final Instant now = Instant.now();
+                    String info = """
+                        Last notification was %s minutes ago
+                        You interval between notifications is %s minutes
+                        You saved %d words""".formatted(
+                            Duration.between(englishUser.getLastNotified(), now).toMinutes(),
+                            englishUser.getInterval().toMinutes(),
+                            userService.getNumberOfWords(englishUser.getId())
+                        );
+                    sendMessage(user.getId(), info, false);
                 }
                 default -> {
                     // Handle saving words on reply

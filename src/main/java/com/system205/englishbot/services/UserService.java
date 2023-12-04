@@ -106,4 +106,8 @@ public class UserService {
 
         throw new IllegalStateException("The element has to be present. There might be something wrong with random.");
     }
+
+    public long getNumberOfWords(Long id) {
+        return wordRepository.countByUser_Id(id);
+    }
 }
