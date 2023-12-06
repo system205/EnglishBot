@@ -26,5 +26,9 @@ public class EnglishUser {
     private Instant lastNotified;
 
     @Column(nullable = false)
-    private Duration interval = Duration.ofSeconds(5);
+    private Duration interval;
+
+    @OneToOne(cascade = CascadeType.PERSIST)
+    @JoinColumn(name = "plan_id", referencedColumnName = "id")
+    private EducationPlan educationPlan;
 }

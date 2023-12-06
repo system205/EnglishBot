@@ -2,6 +2,7 @@ package com.system205.englishbot.telegram;
 
 import com.system205.englishbot.dto.Notification;
 import com.system205.englishbot.entity.Word;
+import com.system205.englishbot.services.EducationService;
 import com.system205.englishbot.services.UserService;
 import com.system205.englishbot.telegram.command.BotCommand;
 import lombok.extern.slf4j.Slf4j;
@@ -24,29 +25,30 @@ import java.util.Set;
 @Component
 @Slf4j
 @EnableScheduling
-public class Bot extends TelegramLongPollingBot implements TelegramBot{
+public class Bot extends TelegramLongPollingBot implements TelegramBot {
     private final Long ownerId;
     private final UserService userService;
-
+    private final EducationService educationService;
     private final Map<String, BotCommand> commands;
 
-    public Bot(@Value("${bot.token}") String botToken, @Value("${bot.owner-id}") Long ownerId, UserService userService, Map<String, BotCommand> commands) {
+    public Bot(@Value("${bot.token}") String botToken, @Value("${bot.owner-id}") Long ownerId, UserService userService, Map<String, BotCommand> commands, EducationService educationService) {
         super(botToken);
         this.ownerId = ownerId;
         this.userService = userService;
         this.commands = commands;
+        this.educationService = educationService;
     }
 
     @Override
     public void onUpdateReceived(Update update) {
-        if (update.hasMessage() && update.getMessage().hasText()){
+        if (update.hasMessage() && update.getMessage().hasText()) {
             final String text = update.getMessage().getText();
             final User user = update.getMessage().getFrom();
 
-            switch (text){
+            switch (text) {
                 case "/start" -> {
                     log.info("User#{} sent /start", user.getId());
-                    sendMessage(ownerId, "%s#%s sent /start".formatted(user.getUserName() , user.getId()), false);
+                    sendMessage(ownerId, "%s#%s sent /start".formatted(user.getUserName(), user.getId()), false);
                 }
                 case "/add_words" -> sendMessage(user.getId(),
                     """
@@ -64,9 +66,9 @@ public class Bot extends TelegramLongPollingBot implements TelegramBot{
                     if (update.getMessage().isReply()) {
                         this.userService.addWordsToUser(user.getId(),
                             Arrays.stream(text.split("\n"))
-                            .map(s -> s.split(" - "))
-                            .map(s -> new Word(s[0], s[1]))
-                            .toList()
+                                .map(s -> s.split(" - "))
+                                .map(s -> new Word(s[0], s[1]))
+                                .toList()
                         );
                     }
                 }
@@ -76,7 +78,7 @@ public class Bot extends TelegramLongPollingBot implements TelegramBot{
 
     @Scheduled(fixedRateString = "${bot.scheduling.rate}")
     private void notifyAllUsersIfNeeded() {
-        List<Notification> notifications = this.userService.getScheduledNotifications();
+        List<Notification> notifications = educationService.getNotifications();
         log.info("Will notify {} users", notifications.size());
         for (Notification notification : notifications) {
             sendMessage(notification.getUser().getId(), notification.getText(), false);

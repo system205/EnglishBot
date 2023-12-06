@@ -2,4 +2,6 @@ bot:
   token: ${DEV_TELEGRAM_TOKEN}
   scheduling:
     rate: 5000 # in milliseconds
-    default-interval: 1 # in minutes
+
+user:
+  default-interval: 1 # in minutes
