@@ -28,7 +28,7 @@ public class EnglishUser {
     @Column(nullable = false)
     private Duration interval;
 
-    @OneToOne(cascade = CascadeType.PERSIST)
+    @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "plan_id", referencedColumnName = "id")
     private EducationPlan educationPlan;
 }

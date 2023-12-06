@@ -2,6 +2,9 @@ bot:
   token: ${DEV_TELEGRAM_TOKEN}
   scheduling:
     rate: 5000 # in milliseconds
+  education-plan:
+    scheduling:
+      cron: 0 0/2 1-23 * * * # each 2 minutes
 
 user:
   default-interval: 1 # in minutes

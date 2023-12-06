@@ -21,6 +21,7 @@ public final class EducationPlan {
     @GeneratedValue
     private Long id;
 
+    @Column(nullable = false)
     private LocalDate lastUpdate;
 
     @ManyToMany(fetch = FetchType.EAGER)
