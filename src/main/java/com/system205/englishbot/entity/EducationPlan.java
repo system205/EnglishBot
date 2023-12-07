@@ -32,6 +32,9 @@ public final class EducationPlan {
     )
     private Collection<Word> dailyWords;
 
+    @Column(nullable = false, columnDefinition = "int default 0")
+    private Integer numberOfWords;
+
     public static EducationPlan defaultPlan() {
         EducationPlan plan = new EducationPlan();
         plan.lastUpdate = LocalDate.ofEpochDay(0); // Never updated

@@ -65,11 +65,10 @@ public class EducationService {
     @Scheduled(cron = "${bot.education-plan.scheduling.cron}")
     private void updateEducationPlans(){
         LocalDate now = LocalDate.now();
-        int numberOfDailyWords = 3; // TODO - refactor to be user preference
         List<EnglishUser> updatedUsers = new ArrayList<>();
 
         for (EnglishUser user : userService.getAllUsers()) {
-            updateUserEducationPlan(user, now, numberOfDailyWords).ifPresent(updatedUsers::add);
+            updateUserEducationPlan(user, now).ifPresent(updatedUsers::add);
         }
 
         log.info("Education plan was updated for {} users", updatedUsers.size());
@@ -79,9 +78,10 @@ public class EducationService {
 
     /**
      * @return Optional with the updated user or empty if nothing was required update*/
-    private Optional<EnglishUser> updateUserEducationPlan(EnglishUser user, LocalDate now, int numberOfDailyWords) {
+    private Optional<EnglishUser> updateUserEducationPlan(EnglishUser user, LocalDate now) {
         final EducationPlan educationPlan = user.getEducationPlan();
         final LocalDate lastUpdate = educationPlan.getLastUpdate();
+        int numberOfDailyWords = educationPlan.getNumberOfWords();
         Word[] suggestedWords = new Word[numberOfDailyWords];
 
         // Update education plan - suggest new words

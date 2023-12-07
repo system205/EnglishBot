@@ -38,10 +38,12 @@ public class InfoCommand implements BotCommand {
         String info = """
             Last notification was %s minutes ago
             You interval between notifications is %s minutes
-            You saved %d words""".formatted(
+            You saved %d words
+            Number of daily words: %d""".formatted(
             Duration.between(englishUser.getLastNotified(), now).toMinutes(),
             englishUser.getInterval().toMinutes(),
-            userService.getNumberOfWords(englishUser.getId())
+            userService.getNumberOfWords(englishUser.getId()),
+            englishUser.getEducationPlan().getNumberOfWords()
         );
         bot.sendMessage(user.getId(), info);
     }

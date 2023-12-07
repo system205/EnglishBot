@@ -61,7 +61,7 @@ public class Bot extends TelegramLongPollingBot implements TelegramBot {
                     sendMessage(user.getId(), userWords.toString(), false);
                 }
                 default -> {
-                    commands.getOrDefault(text, BotCommand.DoNothingCommand).execute(update);
+                    commands.getOrDefault(text.split(" ")[0], BotCommand.DoNothingCommand).execute(update);
                     // Handle saving words on reply
                     if (update.getMessage().isReply()) {
                         this.userService.addWordsToUser(user.getId(),
