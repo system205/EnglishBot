@@ -4,7 +4,10 @@
 
 - Show saved words
 - Add words
-- Notify a user with a random word
+- Scheduled notification to a user with some word from the vocabulary
+- Get info about user settings (interval, last notification, number of words, number of daily words)
+- Education plan - tracks daily words, updatable
+- Set number of daily words
 
 ## ⚙ Deploy
 
