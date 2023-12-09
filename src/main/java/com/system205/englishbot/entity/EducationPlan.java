@@ -4,6 +4,7 @@ import com.system205.englishbot.utils.Utils;
 import jakarta.persistence.*;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.LocalDate;
 import java.util.Collection;
@@ -32,7 +33,8 @@ public final class EducationPlan {
     )
     private Collection<Word> dailyWords;
 
-    @Column(nullable = false, columnDefinition = "int default 0")
+    @Column(nullable = false)
+    @ColumnDefault("0")
     private Integer numberOfWords;
 
     public static EducationPlan defaultPlan() {
