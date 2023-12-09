@@ -13,12 +13,12 @@ import org.telegram.telegrambots.meta.api.objects.User;
 import java.util.List;
 
 @Component("/set_daily_words")
-public class SetDailyWords implements BotCommand{
+public class SetDailyWordsCommand implements BotCommand{
     private final TelegramBot bot;
     private final UserService userService;
 
     @Lazy
-    public SetDailyWords(Bot bot, UserService userService) {
+    public SetDailyWordsCommand(Bot bot, UserService userService) {
         this.bot = bot;
         this.userService = userService;
     }
