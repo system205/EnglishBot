@@ -46,10 +46,6 @@ public class Bot extends TelegramLongPollingBot implements TelegramBot {
             final User user = update.getMessage().getFrom();
 
             switch (text) {
-                case "/start" -> {
-                    log.info("User#{} sent /start", user.getId());
-                    sendMessage(ownerId, "%s#%s sent /start".formatted(user.getUserName(), user.getId()), false);
-                }
                 case "/add_words" -> sendMessage(user.getId(),
                     """
                         Reply with the lines of words:
@@ -61,7 +57,7 @@ public class Bot extends TelegramLongPollingBot implements TelegramBot {
                     sendMessage(user.getId(), userWords.toString(), false);
                 }
                 default -> {
-                    commands.getOrDefault(text.split(" ")[0], BotCommand.DoNothingCommand).execute(update);
+                    commands.getOrDefault(text.split(" ")[0], BotCommand.DoNothingCommand).execute(update, this);
                     // Handle saving words on reply
                     if (update.getMessage().isReply()) {
                         this.userService.addWordsToUser(user.getId(),
