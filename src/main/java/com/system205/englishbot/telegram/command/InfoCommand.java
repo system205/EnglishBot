@@ -41,7 +41,7 @@ public class InfoCommand implements BotCommand {
             You saved %d words
             Number of daily words: %d""".formatted(
             Duration.between(englishUser.getLastNotified(), now).toMinutes(),
-            englishUser.getInterval().toMinutes(),
+            englishUser.getNotificationSettings().getInterval().toMinutes(),
             userService.getNumberOfWords(englishUser.getId()),
             englishUser.getEducationPlan().getNumberOfWords()
         );

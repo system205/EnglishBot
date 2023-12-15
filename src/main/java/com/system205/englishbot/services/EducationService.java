@@ -40,7 +40,7 @@ public class EducationService {
 
         final Instant now = Instant.now();
         for (EnglishUser user : userService.getAllUsers()) {
-            if (Duration.between(user.getLastNotified(), now).compareTo(user.getInterval()) > 0) {
+            if (Duration.between(user.getLastNotified(), now).compareTo(user.getNotificationSettings().getInterval()) > 0) {
 
                 Word suggestedWord = user.getEducationPlan().suggestWord();
                 notifications.add(Notification.builder()

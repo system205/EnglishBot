@@ -3,6 +3,7 @@ package com.system205.englishbot.services;
 import com.system205.englishbot.dto.properties.UserProperties;
 import com.system205.englishbot.entity.EducationPlan;
 import com.system205.englishbot.entity.EnglishUser;
+import com.system205.englishbot.entity.NotificationSettings;
 import com.system205.englishbot.entity.Word;
 import com.system205.englishbot.repositories.EnglishUserRepository;
 import com.system205.englishbot.repositories.WordRepository;
@@ -10,9 +11,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.Duration;
 import java.time.Instant;
-import java.util.*;
+import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -48,7 +50,7 @@ public class UserService {
         return EnglishUser.builder()
             .id(id)
             .lastNotified(Instant.now())
-            .interval(Duration.ofMinutes(userProperties.getDefaultInterval()))
+            .notificationSettings(NotificationSettings.defaultSettings())
             .educationPlan(EducationPlan.defaultPlan())
             .build();
     }
