@@ -3,7 +3,6 @@ package com.system205.englishbot.entity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Duration;
 import java.time.Instant;
 import java.util.Set;
 
@@ -25,10 +24,11 @@ public class EnglishUser {
     @Column(nullable = false)
     private Instant lastNotified;
 
-    @Column(nullable = false)
-    private Duration interval;
+    @OneToOne(optional = false, cascade = {CascadeType.MERGE})
+    @JoinColumn(name = "notify_settings_id", referencedColumnName = "id")
+    private NotificationSettings notificationSettings;
 
-    @OneToOne(cascade = {CascadeType.MERGE})
+    @OneToOne(optional = false, cascade = {CascadeType.MERGE})
     @JoinColumn(name = "plan_id", referencedColumnName = "id")
     private EducationPlan educationPlan;
 }
