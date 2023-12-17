@@ -21,12 +21,15 @@ public class NotificationSettings {
     private Long id;
 
     @Column(nullable = false)
+    @ColumnDefault("600000000000")
     private Duration interval;
 
-    @ColumnDefault("06:00:00")
+    @Column(nullable = false)
+    @ColumnDefault("'06:00:00'")
     private LocalTime startTime;
 
-    @ColumnDefault("21:00:00")
+    @Column(nullable = false)
+    @ColumnDefault("'21:00:00'")
     private LocalTime endTime;
 
 

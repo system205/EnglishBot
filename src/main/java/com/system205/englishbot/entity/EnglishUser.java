@@ -24,11 +24,11 @@ public class EnglishUser {
     @Column(nullable = false)
     private Instant lastNotified;
 
-    @OneToOne(optional = false, cascade = {CascadeType.MERGE})
+    @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "notify_settings_id", referencedColumnName = "id")
     private NotificationSettings notificationSettings;
 
-    @OneToOne(optional = false, cascade = {CascadeType.MERGE})
+    @OneToOne(cascade = {CascadeType.MERGE})
     @JoinColumn(name = "plan_id", referencedColumnName = "id")
     private EducationPlan educationPlan;
 }
