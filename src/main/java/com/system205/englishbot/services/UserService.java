@@ -1,6 +1,5 @@
 package com.system205.englishbot.services;
 
-import com.system205.englishbot.dto.properties.UserProperties;
 import com.system205.englishbot.entity.EducationPlan;
 import com.system205.englishbot.entity.EnglishUser;
 import com.system205.englishbot.entity.NotificationSettings;
@@ -23,7 +22,6 @@ public class UserService {
 
     private final EnglishUserRepository userRepository;
     private final WordRepository wordRepository;
-    private final UserProperties userProperties;
 
     public EnglishUser getUser(Long id) {
         final Optional<EnglishUser> optionalUser = userRepository.findById(id);

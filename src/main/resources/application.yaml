@@ -7,9 +7,6 @@ bot:
     scheduling:
       cron: 0 0 1 * * * # once at 1am each day
 
-user:
-  default-interval: 60 # in minutes
-
 spring:
   datasource:
     url: jdbc:postgresql://localhost:5432/english
