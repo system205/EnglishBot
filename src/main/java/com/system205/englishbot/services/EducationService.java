@@ -81,26 +81,45 @@ public class EducationService {
     private Optional<EnglishUser> updateUserEducationPlan(EnglishUser user, LocalDate now) {
         final EducationPlan educationPlan = user.getEducationPlan();
         final LocalDate lastUpdate = educationPlan.getLastUpdate();
-        int numberOfDailyWords = educationPlan.getNumberOfWords();
-        Word[] suggestedWords = new Word[numberOfDailyWords];
 
         // Update education plan - suggest new words
         if (ChronoUnit.DAYS.between(lastUpdate, now) >= 1) {
-            final Set<Word> availableWords = userService.getWordsByUserId(user.getId());
-            if (availableWords.isEmpty()) return Optional.empty();
-
-            for (int i = 0; i < numberOfDailyWords; ++i) {
-                suggestedWords[i] = Utils.getRandomElement(availableWords);
-            }
-
             educationPlan.setLastUpdate(now);
-            educationPlan.setDailyWords(List.of(suggestedWords));
-            log.info("Education plan for user {} is updated. New words: {}", user.getId(), Arrays.toString(suggestedWords));
+            final List<Word> suggestedUserWords = suggestUserWords(user);
+            educationPlan.setDailyWords(suggestedUserWords);
+            log.info("Education plan for user {} is updated. New words: {}", user.getId(), suggestedUserWords);
 
             return Optional.of(user);
         }
 
         return Optional.empty();
+    }
+
+    /**
+     * Picks N words from all users saved words <br>
+     * Where N is number of daily suggested words
+     * @return List of words for daily plan */
+    private List<Word> suggestUserWords(EnglishUser user){
+        final Set<Word> availableWords = userService.getWordsByUserId(user.getId());
+        if (availableWords.isEmpty()) return Collections.emptyList();
+        final int numberOfDailyWords = user.getEducationPlan().getNumberOfWords();
+        Word[] suggestedWords = new Word[numberOfDailyWords];
+        for (int i = 0; i < numberOfDailyWords; ++i) {
+            suggestedWords[i] = Utils.getRandomElement(availableWords);
+        }
+        return List.of(suggestedWords);
+    }
+
+    /**
+     * @return new plan for a given user
+     * */
+    public void getNewEducationPlanForUser(EnglishUser user){
+        final EducationPlan plan = EducationPlan.defaultPlan();
+        plan.setNumberOfWords(user.getEducationPlan().getNumberOfWords());
+        plan.setLastUpdate(LocalDate.now());
+        plan.setDailyWords(suggestUserWords(user));
+        user.setEducationPlan(plan);
+        userService.updateUsers(List.of(user));
     }
 
 }

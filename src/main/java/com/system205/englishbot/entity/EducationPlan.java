@@ -35,12 +35,13 @@ public final class EducationPlan {
 
     @Column(nullable = false)
     @ColumnDefault("0")
-    private Integer numberOfWords;
+    private int numberOfWords;
 
     public static EducationPlan defaultPlan() {
         EducationPlan plan = new EducationPlan();
         plan.lastUpdate = LocalDate.ofEpochDay(0); // Never updated
         plan.dailyWords = Collections.emptyList();
+        plan.numberOfWords = 3;
         return plan;
     }
 
