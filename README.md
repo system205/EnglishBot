@@ -21,6 +21,10 @@
 2. ```./mvnw clean install -DskipTests```
 3. ```docker build -t system205/english-bot:latest```
 4. ```docker-compose up```
+5. Alternatively with Maven plugin:
+   1. Run ```./mvnw -DskipTests=true spring-boot:build-image```
+   2. Set up ```DOCKER_LOGIN``` and ```DOCKER_PASSWORD``` as env. variables
+   3. So, you can specify ```-Dspring-boot.build-image.publish=true``` to publish the image
 
 ## 🧾 [Properties](./src/main/resources/application.yaml)
 
