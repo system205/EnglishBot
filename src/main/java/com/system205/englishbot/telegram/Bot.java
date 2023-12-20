@@ -75,7 +75,8 @@ public class Bot extends TelegramLongPollingBot implements TelegramBot {
     @Scheduled(fixedRateString = "${bot.scheduling.rate}")
     private void notifyAllUsersIfNeeded() {
         List<Notification> notifications = educationService.getNotifications();
-        log.info("Will notify {} users", notifications.size());
+        if (!notifications.isEmpty())
+            log.info("Will notify {} users", notifications.size());
         for (Notification notification : notifications) {
             sendMessage(notification.getUser().getId(), notification.getText(), false);
         }
