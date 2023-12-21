@@ -3,6 +3,7 @@ package com.system205.englishbot.services;
 import com.system205.englishbot.dto.Notification;
 import com.system205.englishbot.entity.EducationPlan;
 import com.system205.englishbot.entity.EnglishUser;
+import com.system205.englishbot.entity.NotificationSettings;
 import com.system205.englishbot.entity.Word;
 import com.system205.englishbot.utils.Utils;
 import lombok.extern.slf4j.Slf4j;
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 
@@ -39,8 +41,11 @@ public class EducationService {
         final List<EnglishUser> notifiedUsers = new ArrayList<>();
 
         final Instant now = Instant.now();
+        final LocalTime nowTime = LocalTime.now();
         for (EnglishUser user : userService.getAllUsers()) {
-            if (Duration.between(user.getLastNotified(), now).compareTo(user.getNotificationSettings().getInterval()) > 0) {
+            final NotificationSettings userSettings = user.getNotificationSettings();
+            if (Duration.between(user.getLastNotified(), now).compareTo(userSettings.getInterval()) > 0 &&
+            userSettings.getEndTime().isAfter(nowTime) && userSettings.getStartTime().isBefore(nowTime)) {
 
                 Word suggestedWord = user.getEducationPlan().suggestWord();
                 notifications.add(Notification.builder()
